@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bot Tıklama Engelleme</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="shield">🛡️</span><div><strong>Bot Tıklama</strong><small>Engelleme</small></div></div>
+    <nav>
+      <a class="active" href="#dashboard">Dashboard</a>
+      <a href="#clicks">Tıklamalar</a>
+      <a href="#suspicious">Şüpheli Trafik</a>
+      <a href="#ips">IP Listesi</a>
+      <a href="#settings">Ayarlar</a>
+    </nav>
+  </aside>
+  <main class="content">
+    <header><div><p class="eyebrow">REKLAM TRAFİĞİ GÜVENLİĞİ</p><h1>Bot Tıklama Engelleme</h1><p class="muted">Google Ads trafiğini izle, şüpheli davranışları tespit et ve reklam bütçeni koru.</p></div><button class="primary" id="refreshBtn">↻ Verileri Yenile</button></header>
+    <section class="cards" id="dashboard">
+      <div class="card"><span>Bugünkü Tıklamalar</span><b id="totalClicks">1.248</b><em>+12,4%</em></div>
+      <div class="card warning"><span>Şüpheli Tıklamalar</span><b id="suspiciousClicks">87</b><em>İncelenmeli</em></div>
+      <div class="card danger"><span>Bot Trafiği</span><b id="botTraffic">32</b><em>2,6% trafik</em></div>
+      <div class="card success"><span>Engellenen IP</span><b id="blockedIps">14</b><em>Aktif</em></div>
+    </section>
+    <section class="panel" id="clicks">
+      <div class="panel-head"><div><h2>Son Şüpheli Tıklamalar</h2><p>Risk skoru yüksek ziyaretçiler</p></div><button class="ghost" id="filterBtn">Filtrele</button></div>
+      <div class="table-wrap"><table><thead><tr><th>IP Adresi</th><th>Tarih / Saat</th><th>Tıklama</th><th>Kaynak</th><th>Risk</th><th>Durum</th><th></th></tr></thead><tbody id="clickTable"></tbody></table></div>
+    </section>
+    <section class="panel" id="ips"><div class="panel-head"><div><h2>IP Koruma Listesi</h2><p>Manuel olarak engellenen IP adresleri</p></div><button class="primary" id="addIpBtn">+ IP Ekle</button></div><div class="empty">Henüz manuel olarak eklenmiş IP bulunmuyor.</div></section>
+    <div class="notice">ℹ️ <strong>Not:</strong> Risk skoru davranış sinyallerine göre oluşturulan bir göstergedir. Tek başına bir IP adresinin kötü niyetli olduğunu kesin olarak kanıtlamaz.</div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
