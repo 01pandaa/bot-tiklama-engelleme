@@ -1,37 +1,8 @@
 <!doctype html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bot Tıklama Engelleme</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <aside class="sidebar">
-    <div class="brand"><span class="shield">🛡️</span><div><strong>Bot Tıklama</strong><small>Engelleme</small></div></div>
-    <nav>
-      <a class="active" href="#dashboard">Dashboard</a>
-      <a href="#clicks">Tıklamalar</a>
-      <a href="#suspicious">Şüpheli Trafik</a>
-      <a href="#ips">IP Listesi</a>
-      <a href="#settings">Ayarlar</a>
-    </nav>
-  </aside>
-  <main class="content">
-    <header><div><p class="eyebrow">REKLAM TRAFİĞİ GÜVENLİĞİ</p><h1>Bot Tıklama Engelleme</h1><p class="muted">Google Ads trafiğini izle, şüpheli davranışları tespit et ve reklam bütçeni koru.</p></div><button class="primary" id="refreshBtn">↻ Verileri Yenile</button></header>
-    <section class="cards" id="dashboard">
-      <div class="card"><span>Bugünkü Tıklamalar</span><b id="totalClicks">1.248</b><em>+12,4%</em></div>
-      <div class="card warning"><span>Şüpheli Tıklamalar</span><b id="suspiciousClicks">87</b><em>İncelenmeli</em></div>
-      <div class="card danger"><span>Bot Trafiği</span><b id="botTraffic">32</b><em>2,6% trafik</em></div>
-      <div class="card success"><span>Engellenen IP</span><b id="blockedIps">14</b><em>Aktif</em></div>
-    </section>
-    <section class="panel" id="clicks">
-      <div class="panel-head"><div><h2>Son Şüpheli Tıklamalar</h2><p>Risk skoru yüksek ziyaretçiler</p></div><button class="ghost" id="filterBtn">Filtrele</button></div>
-      <div class="table-wrap"><table><thead><tr><th>IP Adresi</th><th>Tarih / Saat</th><th>Tıklama</th><th>Kaynak</th><th>Risk</th><th>Durum</th><th></th></tr></thead><tbody id="clickTable"></tbody></table></div>
-    </section>
-    <section class="panel" id="ips"><div class="panel-head"><div><h2>IP Koruma Listesi</h2><p>Manuel olarak engellenen IP adresleri</p></div><button class="primary" id="addIpBtn">+ IP Ekle</button></div><div class="empty">Henüz manuel olarak eklenmiş IP bulunmuyor.</div></section>
-    <div class="notice">ℹ️ <strong>Not:</strong> Risk skoru davranış sinyallerine göre oluşturulan bir göstergedir. Tek başına bir IP adresinin kötü niyetli olduğunu kesin olarak kanıtlamaz.</div>
-  </main>
-  <script src="app.js"></script>
-</body>
-</html>
+<html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>ClickShield — Bot Tıklama Engelleme</title><meta name="description" content="Reklam trafiğini izle, şüpheli tıklamaları tespit et ve reklam bütçeni koru."><link rel="stylesheet" href="style.css"></head>
+<body><div class="app"><aside class="sidebar"><div class="logo"><div class="logo-mark">C</div><div><strong>ClickShield</strong><span>Bot Tıklama Koruması</span></div></div><div class="workspace"><small>ÇALIŞMA ALANI</small><button class="site-select">● Benim Sitem <b>⌄</b></button></div><nav><a class="active" href="#dashboard"><i>⌂</i> Genel Bakış</a><a href="#clicks"><i>⌁</i> Tıklamalar <b class="nav-count">87</b></a><a href="#traffic"><i>◉</i> Şüpheli Trafik</a><a href="#ips"><i>⊘</i> Engellenen IP'ler</a><a href="#sites"><i>▣</i> Sitelerim</a><a href="#reports"><i>▤</i> Raporlar</a></nav><div class="sidebar-bottom"><a href="#settings"><i>⚙</i> Ayarlar</a><div class="user"><div class="avatar">A</div><div><strong>Admin</strong><span>Yönetici</span></div><b>•••</b></div></div></aside>
+<main><header class="topbar"><div><span class="breadcrumb">Genel Bakış</span><h1>Hoş geldin 👋</h1><p>Reklam trafiğin bugün güvende.</p></div><div class="top-actions"><span class="live"><span></span> Sistem aktif</span><button class="icon-btn" title="Bildirimler">♧<em>3</em></button><button class="primary" id="refreshBtn">↻ Yenile</button></div></header>
+<section class="cards" id="dashboard"><article class="metric"><div class="metric-top"><span>Toplam tıklama</span><span class="metric-icon blue">⌁</span></div><strong>1.248</strong><div><span class="trend up">↗ 12,4%</span><small> önceki güne göre</small></div></article><article class="metric"><div class="metric-top"><span>Şüpheli tıklama</span><span class="metric-icon amber">!</span></div><strong>87</strong><div><span class="trend warn">↗ 6,2%</span><small> inceleme bekliyor</small></div></article><article class="metric"><div class="metric-top"><span>Bot trafiği</span><span class="metric-icon red">⌁</span></div><strong>32</strong><div><span class="trend danger">2,6%</span><small> toplam trafikte</small></div></article><article class="metric"><div class="metric-top"><span>Engellenen IP</span><span class="metric-icon green">✓</span></div><strong>14</strong><div><span class="trend up">Aktif</span><small> koruma listesinde</small></div></article></section>
+<section class="grid-main"><article class="panel chart-panel" id="traffic"><div class="panel-head"><div><h2>Tıklama trafiği</h2><p>Son 7 gün · tüm kaynaklar</p></div><select id="period"><option>Son 7 gün</option><option>Son 30 gün</option></select></div><div class="chart"><div class="ylabels"><span>400</span><span>300</span><span>200</span><span>100</span><span>0</span></div><div class="chart-area"><div class="grid-lines"></div><svg viewBox="0 0 700 250" preserveAspectRatio="none"><path d="M0,185 C55,170 70,130 120,148 S185,205 230,160 S285,80 340,120 S400,175 455,112 S520,70 570,105 S630,135 700,58 L700,250 L0,250 Z" class="area"/><path d="M0,185 C55,170 70,130 120,148 S185,205 230,160 S285,80 340,120 S400,175 455,112 S520,70 570,105 S630,135 700,58" class="line"/></svg><div class="xlabels"><span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span></div></div></div></article><article class="panel score-panel"><div class="panel-head"><div><h2>Güvenlik skoru</h2><p>Son 24 saat</p></div><span class="help">?</span></div><div class="score-ring"><div><strong>86</strong><span>/100</span></div></div><div class="score-state"><span></span><strong>İyi durumda</strong></div><p class="score-note">Trafiğinin büyük bölümü normal görünüyor. 7 ziyaretçi inceleme gerektiriyor.</p></article></section>
+<section class="panel" id="clicks"><div class="panel-head"><div><h2>Son şüpheli tıklamalar</h2><p>Risk sinyallerine göre sıralanmıştır</p></div><button class="ghost" id="filterBtn">Filtrele ▾</button></div><div class="table-wrap"><table><thead><tr><th>IP adresi</th><th>Tarih / saat</th><th>Tıklama</th><th>Kaynak</th><th>Risk skoru</th><th>Durum</th><th></th></tr></thead><tbody id="clickTable"></tbody></table></div><div class="table-footer"><span>5 kayıttan 1–5 gösteriliyor</span><button class="link-btn">Tüm tıklamaları gör →</button></div></section>
+<section class="bottom-grid"><article class="panel quick" id="sites"><div class="panel-head"><div><h2>Siten</h2><p>Takip kodu durumu</p></div><span class="ok-pill">● Aktif</span></div><div class="domain"><span class="domain-icon">↗</span><div><strong>www.siten.com</strong><small>Son veri: 2 dk önce</small></div></div><button class="ghost wide">Takip kodunu görüntüle</button></article><article class="panel quick" id="ips"><div class="panel-head"><div><h2>Koruma listesi</h2><p>Engellenen adresler</p></div><strong class="big-green">14</strong></div><p class="muted-text">Şüpheli IP'ler reklam trafiğine erişemeyecek şekilde işaretlendi.</p><button class="ghost wide">IP listesini yönet →</button></article></section><div class="notice">ⓘ <strong>Güvenlik notu:</strong> Risk skoru davranış sinyallerine dayalı bir göstergedir; tek başına kötü niyet kanıtı değildir.</div></main></div><script src="app.js"></script></body></html>
