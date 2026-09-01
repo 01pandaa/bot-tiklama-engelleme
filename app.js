@@ -1,31 +1,22 @@
-const SUPABASE_URL='https://snfjcdknsfwjnxrggypc.supabase.co';
-const SUPABASE_ANON_KEY='';
 const SITE_KEY='4189c147ff7e90470c66cb02';
-const rows=[];
 const table=document.getElementById('clickTable');
-const demoRows=[
- {ip:'185.72.xxx.xxx',date:'31.08.2026 14:42',clicks:18,source:'Google Ads',risk:'Yüksek',score:94,status:'İncelenmeli'},
- {ip:'88.241.xxx.xxx',date:'31.08.2026 14:36',clicks:9,source:'Google Ads',risk:'Orta',score:71,status:'İncelenmeli'},
- {ip:'78.190.xxx.xxx',date:'31.08.2026 14:21',clicks:7,source:'Google Ads',risk:'Yüksek',score:88,status:'İncelenmeli'},
- {ip:'176.54.xxx.xxx',date:'31.08.2026 13:58',clicks:3,source:'Google Ads',risk:'Düşük',score:24,status:'Normal'},
- {ip:'95.12.xxx.xxx',date:'31.08.2026 13:41',clicks:14,source:'Google Ads',risk:'Yüksek',score:91,status:'İncelenmeli'}
-];
-function render(data){
- table.innerHTML=data.length?data.map((r,i)=>`<tr><td><strong>${r.ip}</strong></td><td>${r.date}</td><td>${r.clicks}</td><td>${r.source}</td><td><span class="badge ${r.risk==='Yüksek'?'high':r.risk==='Orta'?'medium':'low'}">${r.risk} · ${r.score}</span></td><td class="status">${r.status}</td><td><button class="block" data-i="${i}">Engelle</button></td></tr>`).join(''):`<tr><td colspan="7" style="text-align:center;padding:30px">Henüz ziyaret verisi yok.</td></tr>`;
- table.querySelectorAll('.block').forEach(btn=>btn.addEventListener('click',()=>{btn.disabled=true;btn.textContent='Engellendi';}));
+const metrics=document.querySelectorAll('.metric > strong');
+function fmt(v){return new Date(v).toLocaleString('tr-TR',{dateStyle:'short',timeStyle:'short'});}
+function label(v){return v==='high'?'Yüksek':v==='medium'?'Orta':'Düşük';}
+function render(rows){table.innerHTML=rows.length?rows.map(r=>`<tr><td><strong>${r.ip_address||'Bilinmiyor'}</strong></td><td>${fmt(r.occurred_at)}</td><td>1</td><td>${r.referrer||'Direkt'}</td><td><span class="badge ${r.risk_level==='high'?'high':r.risk_level==='medium'?'medium':'low'}">${label(r.risk_level)} · ${r.risk_score}</span></td><td class="status">${r.is_bot?'Bot':'Normal'}</td><td><button class="block">Engelle</button></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:30px">Henüz ziyaret verisi yok.</td></tr>';}
+async function load(){
+ const {data:{session}}=await client.auth.getSession();
+ if(!session)return;
+ const {data:site,error}=await client.from('sites').select('id,domain').eq('site_key',SITE_KEY).maybeSingle();
+ if(error||!site){render([]);return;}
+ const {data:visits}=await client.from('visits').select('ip_address,occurred_at,referrer,risk_score,risk_level,is_bot').eq('site_id',site.id).order('occurred_at',{ascending:false}).limit(200);
+ const rows=visits||[]; const suspicious=rows.filter(x=>x.risk_level!=='low').length; const bots=rows.filter(x=>x.is_bot).length;
+ const {count:blocked}=await client.from('blocked_ips').select('id',{count:'exact',head:true}).eq('site_id',site.id);
+ metrics[0].textContent=rows.length.toLocaleString('tr-TR'); metrics[1].textContent=suspicious.toLocaleString('tr-TR'); metrics[2].textContent=bots.toLocaleString('tr-TR'); metrics[3].textContent=(blocked||0).toLocaleString('tr-TR');
+ const d=document.querySelector('.domain strong');if(d)d.textContent=site.domain; const last=document.querySelector('.domain small');if(last)last.textContent=rows[0]?`Son veri: ${fmt(rows[0].occurred_at)}`:'Henüz veri yok';
+ render(rows.slice(0,5));
+ const score=document.querySelector('.score-ring strong');if(score)score.textContent=Math.max(0,100-suspicious*8-bots*12);
+ const note=document.querySelector('.score-note');if(note)note.textContent=`Toplam ${rows.length} ziyaret kaydedildi. ${suspicious} ziyaret inceleme gerektiriyor.`;
 }
-function fmtDate(v){return new Date(v).toLocaleString('tr-TR',{dateStyle:'short',timeStyle:'short'});}
-async function loadVisits(){
- if(!SUPABASE_ANON_KEY){render(demoRows);return;}
- try{
-  const site=await fetch(`${SUPABASE_URL}/rest/v1/sites?site_key=eq.${SITE_KEY}&select=id`).then(r=>r.json());
-  if(!site?.[0]) return render([]);
-  const data=await fetch(`${SUPABASE_URL}/rest/v1/visits?site_id=eq.${site[0].id}&select=ip_address,occurred_at,referrer,risk_score,risk_level,is_bot&order=occurred_at.desc&limit=50`,{headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`}}).then(r=>r.json());
-  const mapped=(Array.isArray(data)?data:[]).map(v=>({ip:v.ip_address||'Bilinmiyor',date:fmtDate(v.occurred_at),clicks:1,source:v.referrer?.includes('google')?'Google':'Organik / Direkt',risk:v.risk_level==='high'?'Yüksek':v.risk_level==='medium'?'Orta':'Düşük',score:v.risk_score,status:v.is_bot?'Bot':'Normal'}));
-  render(mapped);
- }catch(e){render(demoRows);}
-}
-render(demoRows);
-document.getElementById('refreshBtn')?.addEventListener('click',async e=>{e.currentTarget.textContent='✓ Güncellendi';await loadVisits();setTimeout(()=>e.currentTarget.textContent='↻ Yenile',1200)});
-document.getElementById('filterBtn')?.addEventListener('click',()=>{const onlyHigh=confirm('Sadece yüksek riskli tıklamaları gösterilsin mi?');if(onlyHigh){render(rows.filter(r=>r.risk==='Yüksek'));}else loadVisits();});
-loadVisits();
+document.getElementById('refreshBtn')?.addEventListener('click',async e=>{e.currentTarget.textContent='✓ Güncellendi';await load();setTimeout(()=>e.currentTarget.textContent='↻ Yenile',1200)});
+load();
