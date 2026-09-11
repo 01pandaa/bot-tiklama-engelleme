@@ -22,9 +22,9 @@ function setFormBusy(form, busy, label) {
 
 function getEmailRedirectUrl() {
   try {
-    return new URL('login.html', window.location.href).toString();
+    return new URL('auth-callback.html', window.location.href).toString();
   } catch (_) {
-    return `${window.location.origin}/login.html`;
+    return `${window.location.origin}/auth-callback.html`;
   }
 }
 
@@ -120,6 +120,34 @@ function startRateLimitCooldown(form, extraButton, seconds) {
 
 const loginForm = document.getElementById('loginForm');
 
+async function finishLoginRedirect() {
+  if (!loginForm) return;
+  const queryParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const hasAuthData = queryParams.has('code') || hashParams.has('access_token') || hashParams.get('type') === 'signup';
+  if (!hasAuthData) return;
+
+  try {
+    if (queryParams.has('code')) {
+      const { error } = await client.auth.exchangeCodeForSession(queryParams.get('code'));
+      if (error) throw error;
+    }
+
+    const { data, error } = await client.auth.getSession();
+    if (error) throw error;
+    if (!data.session) {
+      showMessage('Doğrulama bağlantısı geçersiz veya süresi dolmuş. Yeni bir doğrulama e-postası isteyin.', true);
+      return;
+    }
+
+    clearAuthHash();
+    showMessage('E-posta adresin doğrulandı. Panel açılıyor…');
+    window.setTimeout(() => location.replace('index.html'), 350);
+  } catch (error) {
+    showMessage('E-posta doğrulaması tamamlanamadı. Yeni bir doğrulama e-postası isteyin.', true);
+  }
+}
+
 client.auth.onAuthStateChange((event, session) => {
   if (event !== 'SIGNED_IN' || !session || !loginForm || !window.location.hash) return;
   const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
@@ -130,6 +158,7 @@ client.auth.onAuthStateChange((event, session) => {
 });
 
 showAuthRedirectError();
+finishLoginRedirect();
 
 if (loginForm) {
   let requestInFlight = false;
