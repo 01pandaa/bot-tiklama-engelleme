@@ -20,6 +20,32 @@ function setFormBusy(form, busy, label) {
   button.textContent = busy ? label : (button.dataset.originalLabel || button.textContent);
 }
 
+function getEmailRedirectUrl() {
+  try {
+    return new URL('login.html', window.location.href).toString();
+  } catch (_) {
+    return `${window.location.origin}/login.html`;
+  }
+}
+
+function clearAuthHash() {
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+}
+
+function showAuthRedirectError() {
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const errorCode = params.get('error_code');
+  const description = (params.get('error_description') || '').toLowerCase();
+  if (!errorCode && !description) return;
+
+  if (errorCode === 'otp_expired' || description.includes('invalid') || description.includes('expired')) {
+    showMessage('E-posta doğrulama bağlantısı geçersiz veya süresi dolmuş. Kayıt sayfasından yeni bir doğrulama e-postası isteyin.', true);
+  } else {
+    showMessage('E-posta doğrulaması tamamlanamadı. Kayıt sayfasından yeni bir doğrulama e-postası isteyin.', true);
+  }
+  clearAuthHash();
+}
+
 function authErrorMessage(error, action) {
   const raw = String(error?.message || '').trim();
   const normalized = raw.toLowerCase();
@@ -50,6 +76,18 @@ function authErrorMessage(error, action) {
 }
 
 const loginForm = document.getElementById('loginForm');
+
+client.auth.onAuthStateChange((event, session) => {
+  if (event !== 'SIGNED_IN' || !session || !loginForm || !window.location.hash) return;
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  if (!params.has('access_token') && params.get('type') !== 'signup') return;
+  clearAuthHash();
+  showMessage('E-posta adresin doğrulandı. Panel açılıyor…');
+  window.setTimeout(() => location.replace('index.html'), 350);
+});
+
+showAuthRedirectError();
+
 if (loginForm) {
   let requestInFlight = false;
   loginForm.addEventListener('submit', async (event) => {
@@ -95,7 +133,10 @@ if (signupForm) {
       const { data, error } = await client.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName } }
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: getEmailRedirectUrl()
+        }
       });
 
       if (error) {
