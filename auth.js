@@ -117,6 +117,41 @@ if (loginForm) {
 }
 
 const signupForm = document.getElementById('signupForm');
+const resendButton = document.getElementById('resendVerification');
+
+if (resendButton) {
+  resendButton.addEventListener('click', async () => {
+    const email = document.getElementById('email')?.value.trim() || '';
+    if (!email) {
+      showMessage('Önce e-posta adresinizi yazın.', true);
+      return;
+    }
+
+    resendButton.disabled = true;
+    const originalLabel = resendButton.textContent;
+    resendButton.textContent = 'E-posta gönderiliyor…';
+    showMessage('Doğrulama e-postası gönderiliyor…');
+
+    try {
+      const { error } = await client.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: getEmailRedirectUrl() }
+      });
+      if (error) {
+        showMessage(authErrorMessage(error, 'signup'), true);
+        return;
+      }
+      showMessage('Yeni doğrulama e-postası gönderildi. Gelen kutunuzu ve spam klasörünü kontrol edin.');
+    } catch (error) {
+      showMessage(authErrorMessage(error, 'signup'), true);
+    } finally {
+      resendButton.disabled = false;
+      resendButton.textContent = originalLabel;
+    }
+  });
+}
+
 if (signupForm) {
   let requestInFlight = false;
   signupForm.addEventListener('submit', async (event) => {
@@ -141,6 +176,9 @@ if (signupForm) {
 
       if (error) {
         showMessage(authErrorMessage(error, 'signup'), true);
+        if (resendButton && (error.message || '').toLowerCase().includes('already registered')) {
+          resendButton.hidden = false;
+        }
         return;
       }
 
