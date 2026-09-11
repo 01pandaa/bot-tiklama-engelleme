@@ -1,38 +1,68 @@
 <!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ClickShield — Bot Tıklama Engelleme</title><meta name="description" content="Reklam trafiğini izle, şüpheli tıklamaları tespit et ve reklam bütçeni koru.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ClickShield — Bot Tıklama Koruması</title>
+<meta name="description" content="Reklam trafiğini izle, şüpheli ziyaretleri tespit et ve reklam bütçeni koru.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
-<aside class="sidebar">
-  <div class="logo"><div class="logo-mark">C</div><div><strong>ClickShield</strong><span>Bot Tıklama Koruması</span></div></div>
-  <div class="workspace"><small>ÇALIŞMA ALANI</small><button class="site-select">● Benim Sitem <b>⌄</b></button></div>
-  <nav>
-    <a class="active" href="index.html"><i>⌂</i> Genel Bakış</a>
-    <a href="index.html#clicks"><i>⌁</i> Tıklamalar <b class="nav-count">87</b></a>
-    <a href="index.html#traffic"><i>◉</i> Şüpheli Trafik</a>
-    <a href="index.html#ips"><i>⊘</i> Engellenen IP'ler</a>
-    <a href="sites.html"><i>▣</i> Sitelerim</a>
-    <a href="index.html#reports"><i>▤</i> Raporlar</a>
-  </nav>
-  <div class="sidebar-bottom"><a href="index.html#settings"><i>⚙</i> Ayarlar</a><div class="user"><div class="avatar" id="userAvatar">?</div><div><strong id="userName">Kullanıcı</strong><span id="userEmail">Oturum açılıyor</span></div><button id="logoutBtn" class="logout">Çıkış</button></div></div>
-</aside>
-<main>
-<header class="topbar"><div><span class="breadcrumb">Genel Bakış</span><h1>Hoş geldin 👋</h1><p>Reklam trafiğin bugün güvende.</p></div><div class="top-actions"><span class="live"><span></span> Sistem aktif</span><button class="icon-btn" title="Bildirimler">♧<em>3</em></button><button class="primary" id="refreshBtn">↻ Yenile</button></div></header>
-<section class="cards" id="dashboard">
- <article class="metric"><div class="metric-top"><span>Toplam tıklama</span><span class="metric-icon blue">⌁</span></div><strong>1.248</strong><div><span class="trend up">↗ 12,4%</span><small> önceki güne göre</small></div></article>
- <article class="metric"><div class="metric-top"><span>Şüpheli tıklama</span><span class="metric-icon amber">!</span></div><strong>87</strong><div><span class="trend warn">↗ 6,2%</span><small> inceleme bekliyor</small></div></article>
- <article class="metric"><div class="metric-top"><span>Bot trafiği</span><span class="metric-icon red">⌁</span></div><strong>32</strong><div><span class="trend danger">2,6%</span><small> toplam trafikte</small></div></article>
- <article class="metric"><div class="metric-top"><span>Engellenen IP</span><span class="metric-icon green">✓</span></div><strong>14</strong><div><span class="trend up">Aktif</span><small> koruma listesinde</small></div></article>
-</section>
-<section class="grid-main">
- <article class="panel chart-panel" id="traffic"><div class="panel-head"><div><h2>Tıklama trafiği</h2><p>Son 7 gün · tüm kaynaklar</p></div><select id="period"><option>Son 7 gün</option><option>Son 30 gün</option></select></div><div class="chart"><div class="ylabels"><span>400</span><span>300</span><span>200</span><span>100</span><span>0</span></div><div class="chart-area"><div class="grid-lines"></div><svg viewBox="0 0 700 250" preserveAspectRatio="none" aria-label="Tıklama grafiği"><defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-opacity=".20"/><stop offset="1" stop-opacity="0"/></linearGradient></defs><path d="M0,185 C55,170 70,130 120,148 S185,205 230,160 S285,80 340,120 S400,175 455,112 S520,70 570,105 S630,135 700,58 L700,250 L0,250 Z" fill="url(#fill)"/><path d="M0,185 C55,170 70,130 120,148 S185,205 230,160 S285,80 340,120 S400,175 455,112 S520,70 570,105 S630,135 700,58" fill="none" stroke="currentColor" stroke-width="3"/></svg><div class="xlabels"><span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span></div></div></div></article>
- <article class="panel score-panel"><div class="panel-head"><div><h2>Güvenlik skoru</h2><p>Son 24 saat</p></div><span class="help">?</span></div><div class="score-ring"><div><strong>86</strong><span>/100</span></div></div><div class="score-state"><span></span><strong>İyi durumda</strong></div><p class="score-note">Trafiğinin büyük bölümü normal görünüyor. 7 ziyaretçi inceleme gerektiriyor.</p></article>
-</section>
-<section class="panel" id="clicks"><div class="panel-head"><div><h2>Son şüpheli tıklamalar</h2><p>Risk sinyallerine göre sıralanmıştır</p></div><button class="ghost" id="filterBtn">Filtrele ▾</button></div><div class="table-wrap"><table><thead><tr><th>IP adresi</th><th>Tarih / saat</th><th>Tıklama</th><th>Kaynak</th><th>Risk skoru</th><th>Durum</th><th></th></tr></thead><tbody id="clickTable"></tbody></table></div><div class="table-footer"><span>5 kayıttan 1–5 gösteriliyor</span><button class="link-btn">Tüm tıklamaları gör →</button></div></section>
-<section class="bottom-grid"><article class="panel quick" id="sites"><div class="panel-head"><div><h2>Siten</h2><p>Takip kodu durumu</p></div><span class="ok-pill">● Aktif</span></div><div class="domain"><span class="domain-icon">↗</span><div><strong>www.siten.com</strong><small>Son veri: 2 dk önce</small></div></div><a class="ghost wide" href="sites.html">Sitelerimi yönet →</a></article><article class="panel quick" id="ips"><div class="panel-head"><div><h2>Koruma listesi</h2><p>Engellenen adresler</p></div><strong class="big-green">14</strong></div><p class="muted-text">Şüpheli IP'ler reklam trafiğine erişemeyecek şekilde işaretlendi.</p><button class="ghost wide">IP listesini yönet →</button></article></section>
-<div class="notice">ⓘ <strong>Güvenlik notu:</strong> Risk skoru davranış sinyallerine dayalı bir göstergedir; tek başına kötü niyet kanıtı değildir.</div>
-</main></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="auth.js"></script><script src="app.js"></script><script>window.addEventListener('load',async()=>{const {data}=await client.auth.getSession();if(!data.session){location.replace('login.html');return;}const u=data.session.user;document.getElementById('userEmail').textContent=u.email||'';document.getElementById('userName').textContent=u.user_metadata?.full_name||'Müşteri';document.getElementById('userAvatar').textContent=(u.user_metadata?.full_name||u.email||'M')[0].toUpperCase();document.getElementById('logoutBtn').addEventListener('click',async()=>{await client.auth.signOut();location.replace('login.html');});});</script></body></html>
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-mark">C</div><div><strong>ClickShield</strong><span>Bot Tıklama Koruması</span></div></div>
+    <div class="workspace"><small>ÇALIŞMA ALANI</small><select id="siteSelect" class="site-select" aria-label="Çalışma sitesi"><option value="">Siteler yükleniyor…</option></select></div>
+    <nav aria-label="Ana menü">
+      <a class="active" href="index.html" aria-current="page"><i aria-hidden="true">⌂</i> Genel Bakış</a>
+      <a href="#clicks"><i aria-hidden="true">⌁</i> Ziyaretler <b id="navSuspiciousCount" class="nav-count" hidden>0</b></a>
+      <a href="#traffic"><i aria-hidden="true">◉</i> Şüpheli Trafik</a>
+      <a href="sites.html#blocked"><i aria-hidden="true">⊘</i> Koruma Listesi</a>
+      <a href="sites.html"><i aria-hidden="true">▣</i> Sitelerim</a>
+      <a href="#traffic"><i aria-hidden="true">▤</i> Raporlar</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="sites.html"><i aria-hidden="true">⚙</i> Ayarlar &amp; Siteler</a>
+      <div class="user"><div class="avatar" id="userAvatar">?</div><div><strong id="userName">Kullanıcı</strong><span id="userEmail">Oturum açılıyor</span></div><button id="logoutBtn" class="logout" type="button">Çıkış</button></div>
+    </div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div><span class="breadcrumb">Genel Bakış</span><h1 id="welcomeTitle">Reklam trafiği özeti</h1><p id="dashboardSubtitle">Bir site seçerek gerçek ziyaret verilerini görüntüle.</p></div>
+      <div class="top-actions"><span id="systemState" class="live"><span></span> Sistem aktif</span><button class="icon-btn" title="Bildirimler" type="button" disabled>♧</button><button class="primary" id="refreshBtn" type="button">↻ Yenile</button></div>
+    </header>
+
+    <div id="dashboardAlert" class="notice error-notice" role="alert" hidden></div>
+
+    <section class="cards" id="dashboard" aria-label="Özet metrikleri">
+      <article class="metric"><div class="metric-top"><span>Toplam ziyaret</span><span class="metric-icon blue">⌁</span></div><strong id="totalVisits">—</strong><div><span id="totalTrend" class="trend neutral">—</span><small> son 24 saatte</small></div></article>
+      <article class="metric"><div class="metric-top"><span>Şüpheli ziyaret</span><span class="metric-icon amber">!</span></div><strong id="suspiciousVisits">—</strong><div><span id="suspiciousTrend" class="trend warn">—</span><small> inceleme gerektiriyor</small></div></article>
+      <article class="metric"><div class="metric-top"><span>Bot trafiği</span><span class="metric-icon red">⌁</span></div><strong id="botVisits">—</strong><div><span id="botRate" class="trend danger">—</span><small> toplam ziyarette</small></div></article>
+      <article class="metric"><div class="metric-top"><span>Koruma listesindeki IP</span><span class="metric-icon green">✓</span></div><strong id="blockedIps">—</strong><div><span class="trend up">Aktif</span><small> kayıtlı adres</small></div></article>
+    </section>
+
+    <section class="grid-main">
+      <article class="panel chart-panel" id="traffic">
+        <div class="panel-head"><div><h2>Ziyaret trafiği</h2><p id="chartSubtitle">Son 7 gün · tüm kaynaklar</p></div><select id="period" aria-label="Grafik dönemi"><option value="7">Son 7 gün</option><option value="30">Son 30 gün</option></select></div>
+        <div class="chart"><div id="chartYLabels" class="ylabels"><span>—</span><span>—</span><span>—</span><span>—</span><span>0</span></div><div class="chart-area"><div class="grid-lines"></div><svg viewBox="0 0 700 250" preserveAspectRatio="none" role="img" aria-label="Ziyaret trafiği grafiği"><defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2563eb" stop-opacity=".20"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></linearGradient></defs><path id="chartFillPath" fill="url(#fill)"/><path id="chartLinePath" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div id="chartLabels" class="xlabels"></div></div></div>
+      </article>
+      <article class="panel score-panel"><div class="panel-head"><div><h2>Güvenlik göstergesi</h2><p>Son 24 saat</p></div><span class="help" title="Şüpheli ve bot oranlarından hesaplanan gösterge">?</span></div><div id="scoreRing" class="score-ring" style="--score:0"><div><strong id="securityScore">—</strong><span>/100</span></div></div><div class="score-state"><span id="securityDot"></span><strong id="securityState">Veri bekleniyor</strong></div><p id="securityNote" class="score-note">Güvenlik göstergesi, davranış sinyallerini özetler; tek başına kötü niyet kanıtı değildir.</p></article>
+    </section>
+
+    <section class="panel" id="clicks">
+      <div class="panel-head"><div><h2>Son şüpheli ziyaretler</h2><p>Risk sinyallerine göre sıralanmıştır</p></div><label class="filter-label">Göster <select id="riskFilter" aria-label="Ziyaret filtresi"><option value="suspicious">Şüpheliler</option><option value="bot">Botlar</option><option value="all">Tümü</option></select></label></div>
+      <div class="table-wrap"><table><caption class="sr-only">Şüpheli ziyaret kayıtları</caption><thead><tr><th scope="col">IP adresi</th><th scope="col">Tarih / saat</th><th scope="col">Konum</th><th scope="col">Kaynak</th><th scope="col">Risk skoru</th><th scope="col">Durum</th><th scope="col"><span class="sr-only">İşlem</span></th></tr></thead><tbody id="clickTable"></tbody></table></div>
+      <div class="table-footer"><span id="resultsSummary">Veri bekleniyor…</span><button id="showAllBtn" class="link-btn" type="button" hidden>Daha fazla göster →</button></div>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="panel quick" id="sites"><div class="panel-head"><div><h2>Seçili site</h2><p>Takip kodu durumu</p></div><span id="siteStatus" class="ok-pill">● Bekleniyor</span></div><div class="domain"><span class="domain-icon">↗</span><div><strong id="siteName">—</strong><small id="siteDomain">Site seçilmedi</small><small id="siteLastSeen"></small></div></div><a class="ghost wide" href="sites.html">Sitelerimi yönet →</a></article>
+      <article class="panel quick" id="ips"><div class="panel-head"><div><h2>Koruma listesi</h2><p>İnceleme için işaretlenen adresler</p></div><strong id="blockedCountCard" class="big-green">—</strong></div><p id="blockedSummary" class="muted-text">Şüpheli bir IP’yi listene eklediğinde burada görebilirsin.</p><a class="ghost wide" href="sites.html#blocked">IP listesini yönet →</a></article>
+    </section>
+    <div class="notice">ⓘ <strong>Güvenlik notu:</strong> Risk skoru davranış sinyallerine dayalı bir göstergedir; tek başına kötü niyet kanıtı değildir. Koruma listesi kaydı, reklam platformu veya sunucu tarafı engellemenin yerine geçmez.</div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
