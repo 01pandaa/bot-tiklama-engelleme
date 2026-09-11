@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ClickShield — E-posta doğrulanıyor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+  <main class="auth-card" aria-live="polite">
+    <div class="auth-logo"><div class="logo-mark">C</div><div><strong>ClickShield</strong><span>Bot Tıklama Koruması</span></div></div>
+    <h1>E-posta doğrulanıyor</h1>
+    <p id="callbackMessage" class="auth-sub">Bağlantınız kontrol ediliyor. Lütfen bu sayfayı kapatmayın.</p>
+    <a id="callbackLink" class="primary wide" href="login.html" hidden>Giriş sayfasına dön</a>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth-callback.js?v=0.3.4"></script>
+</body>
+</html>
