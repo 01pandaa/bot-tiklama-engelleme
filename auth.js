@@ -49,10 +49,10 @@ function showAuthRedirectError() {
 function authErrorMessage(error, action) {
   const raw = String(error?.message || '').trim();
   const normalized = raw.toLowerCase();
-  const waitMatch = raw.match(/after\s+(\d+)\s+seconds?/i);
 
-  if (error?.status === 429 || normalized.includes('security purposes') || normalized.includes('rate limit') || normalized.includes('too many requests')) {
-    const waitText = waitMatch ? `${waitMatch[1]} saniye` : 'yaklaşık 1 dakika';
+  if (isRateLimitError(error)) {
+    const seconds = retryAfterSeconds(error);
+    const waitText = seconds ? `${seconds} saniye` : 'yaklaşık 1 dakika';
     return `Güvenlik nedeniyle çok sık deneme yapıldı. Lütfen ${waitText} bekleyip butona yalnızca bir kez tıklayın.`;
   }
 
@@ -73,6 +73,49 @@ function authErrorMessage(error, action) {
   }
 
   return action === 'signup' ? 'Hesap oluşturulamadı. Bilgileri kontrol edip tekrar deneyin.' : 'Giriş yapılamadı. Bilgileri kontrol edip tekrar deneyin.';
+}
+
+function isRateLimitError(error) {
+  const message = String(error?.message || '').toLowerCase();
+  return error?.status === 429 || message.includes('security purposes') || message.includes('rate limit') || message.includes('too many requests');
+}
+
+function retryAfterSeconds(error) {
+  const match = String(error?.message || '').match(/after\s+(\d+)\s+seconds?/i);
+  return match ? Number(match[1]) : 60;
+}
+
+function startRateLimitCooldown(form, extraButton, seconds) {
+  const submitButton = form?.querySelector('button[type="submit"]');
+  const originalSubmitLabel = submitButton?.textContent;
+  const originalExtraLabel = extraButton?.textContent;
+  let remaining = Math.max(1, Number(seconds) || 60);
+
+  const updateLabels = () => {
+    if (submitButton) submitButton.textContent = `Tekrar dene (${remaining} sn)`;
+    if (extraButton) extraButton.textContent = `Yeni doğrulama e-postası iste (${remaining} sn)`;
+  };
+
+  if (submitButton) submitButton.disabled = true;
+  if (extraButton) extraButton.disabled = true;
+  updateLabels();
+
+  const timer = window.setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      window.clearInterval(timer);
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalSubmitLabel || 'Tekrar dene';
+      }
+      if (extraButton) {
+        extraButton.disabled = false;
+        extraButton.textContent = originalExtraLabel || 'Doğrulama e-postasını yeniden gönder';
+      }
+      return;
+    }
+    updateLabels();
+  }, 1000);
 }
 
 const loginForm = document.getElementById('loginForm');
@@ -131,6 +174,7 @@ if (resendButton) {
     const originalLabel = resendButton.textContent;
     resendButton.textContent = 'E-posta gönderiliyor…';
     showMessage('Doğrulama e-postası gönderiliyor…');
+    let cooldownSeconds = 0;
 
     try {
       const { error } = await client.auth.resend({
@@ -139,6 +183,7 @@ if (resendButton) {
         options: { emailRedirectTo: getEmailRedirectUrl() }
       });
       if (error) {
+        if (isRateLimitError(error)) cooldownSeconds = retryAfterSeconds(error);
         showMessage(authErrorMessage(error, 'signup'), true);
         return;
       }
@@ -148,6 +193,7 @@ if (resendButton) {
     } finally {
       resendButton.disabled = false;
       resendButton.textContent = originalLabel;
+      if (cooldownSeconds) startRateLimitCooldown(null, resendButton, cooldownSeconds);
     }
   });
 }
@@ -163,6 +209,7 @@ if (signupForm) {
     const password = document.getElementById('password')?.value || '';
     setFormBusy(signupForm, true, 'Hesap oluşturuluyor…');
     showMessage('Hesap oluşturuluyor…');
+    let cooldownSeconds = 0;
 
     try {
       const { data, error } = await client.auth.signUp({
@@ -176,9 +223,11 @@ if (signupForm) {
 
       if (error) {
         showMessage(authErrorMessage(error, 'signup'), true);
-        if (resendButton && (error.message || '').toLowerCase().includes('already registered')) {
+        const normalizedError = (error.message || '').toLowerCase();
+        if (resendButton && (isRateLimitError(error) || normalizedError.includes('already registered'))) {
           resendButton.hidden = false;
         }
+        if (isRateLimitError(error)) cooldownSeconds = retryAfterSeconds(error);
         return;
       }
 
@@ -193,6 +242,7 @@ if (signupForm) {
     } finally {
       requestInFlight = false;
       setFormBusy(signupForm, false);
+      if (cooldownSeconds) startRateLimitCooldown(signupForm, resendButton, cooldownSeconds);
     }
   });
 }
