@@ -52,8 +52,8 @@ function authErrorMessage(error, action) {
 
   if (isRateLimitError(error)) {
     const seconds = retryAfterSeconds(error);
-    const waitText = seconds ? `${seconds} saniye` : 'yaklaşık 1 dakika';
-    return `Güvenlik nedeniyle çok sık deneme yapıldı. Lütfen ${waitText} bekleyip butona yalnızca bir kez tıklayın.`;
+    const waitText = seconds ? `${seconds} saniye` : 'kota sıfırlanana kadar';
+    return `Supabase e-posta servisi geçici olarak sınırlı. Bu sınır proje genelinde olduğu için farklı e-posta adreslerinde de görülür. Lütfen ${waitText} bekleyip tekrar deneyin.`;
   }
 
   if (normalized.includes('user already registered') || normalized.includes('already registered')) {
@@ -82,7 +82,7 @@ function isRateLimitError(error) {
 
 function retryAfterSeconds(error) {
   const match = String(error?.message || '').match(/after\s+(\d+)\s+seconds?/i);
-  return match ? Number(match[1]) : 60;
+  return match ? Number(match[1]) : 0;
 }
 
 function startRateLimitCooldown(form, extraButton, seconds) {
@@ -262,6 +262,12 @@ if (signupForm) {
 
       if (data.session) {
         location.replace('index.html');
+        return;
+      }
+
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        if (resendButton) resendButton.hidden = false;
+        showMessage('Bu e-posta ile daha önce bir hesap açılmış olabilir. Yeni doğrulama e-postası için aşağıdaki butonu kullanın.');
         return;
       }
 
