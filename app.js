@@ -26,6 +26,7 @@ const elements = {
   securityState: document.getElementById('securityState'),
   securityNote: document.getElementById('securityNote'),
   riskFilter: document.getElementById('riskFilter'),
+  filterButtons: document.querySelectorAll('[data-risk-filter]'),
   clickTable: document.getElementById('clickTable'),
   resultsSummary: document.getElementById('resultsSummary'),
   showAllBtn: document.getElementById('showAllBtn'),
@@ -493,6 +494,19 @@ elements.riskFilter?.addEventListener('change', (event) => {
   state.filter = event.target.value;
   state.visibleLimit = 5;
   renderRows(state.rows);
+});
+
+elements.filterButtons?.forEach((button) => {
+  button.addEventListener('click', () => {
+    state.filter = button.dataset.riskFilter || 'suspicious';
+    state.visibleLimit = 5;
+    elements.filterButtons.forEach((item) => {
+      const active = item === button;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-pressed', String(active));
+    });
+    renderRows(state.rows);
+  });
 });
 
 elements.showAllBtn?.addEventListener('click', () => {
