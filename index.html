@@ -49,7 +49,7 @@
     </section>
 
     <section class="panel" id="clicks">
-      <div class="panel-head"><div><h2>Son şüpheli ziyaretler</h2><p>Risk sinyallerine göre sıralanmıştır</p></div><label class="filter-label">Göster <select id="riskFilter" aria-label="Ziyaret filtresi"><option value="suspicious">Şüpheliler</option><option value="bot">Botlar</option><option value="all">Tümü</option></select></label></div>
+      <div class="panel-head"><div><h2>Son şüpheli ziyaretler</h2><p>Risk sinyallerine göre sıralanmıştır</p></div><div class="filter-controls" role="group" aria-label="Ziyaret filtresi"><span class="filter-label-text">Göster</span><button class="filter-button active" type="button" data-risk-filter="suspicious" aria-pressed="true">Şüpheliler</button><button class="filter-button" type="button" data-risk-filter="bot" aria-pressed="false">Botlar</button><button class="filter-button" type="button" data-risk-filter="all" aria-pressed="false">Tüm ziyaretler</button></div></div>
       <div class="table-wrap"><table><caption class="sr-only">Şüpheli ziyaret kayıtları</caption><thead><tr><th scope="col">IP adresi</th><th scope="col">Tarih / saat</th><th scope="col">Konum</th><th scope="col">Kaynak</th><th scope="col">Risk skoru</th><th scope="col">Durum</th><th scope="col"><span class="sr-only">İşlem</span></th></tr></thead><tbody id="clickTable"></tbody></table></div>
       <div class="table-footer"><span id="resultsSummary">Veri bekleniyor…</span><button id="showAllBtn" class="link-btn" type="button" hidden>Daha fazla göster →</button></div>
     </section>
